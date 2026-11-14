@@ -315,6 +315,13 @@ details.mlist>.tablewrap{margin:0;border:0;border-top:1px solid var(--line)}
 .qr-label .ql-h{font-size:6.5pt;font-weight:700;letter-spacing:.03em;color:#444;margin-bottom:1.5mm}.qr-label .ql-q{width:34mm;height:34mm;margin:0 auto 1.5mm}.qr-label .ql-q svg{width:100%;height:100%}
 .qr-label b{font-size:9pt}.qr-label .ql-t{font-weight:700;margin:.5mm 0}.qr-label .ql-m{color:#333}.qr-label .ql-s{font-size:6.5pt;font-style:italic;color:#0b5394;margin-top:1mm}
 @media(max-width:640px){.qr-end{flex-direction:column;align-items:flex-start}}
+body.qrmode>*:not(#qrView):not(.overlay):not(.toast){display:none!important}body.qrmode{background:#e9edf2}
+#qrView{max-width:920px;margin:0 auto;min-height:100vh;background:#fff;color:#000;box-shadow:0 0 18px rgba(0,0,0,.12)}
+.qv-bar{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;gap:10px;align-items:center;background:#0b2a4a;color:#fff;padding:10px 14px;font-family:Arial,Helvetica,sans-serif}
+.qv-bar b{font-size:14px}.qv-bar span{display:block;font-size:11px;opacity:.85}.qv-r{text-align:right}
+.qv-body{padding:12px 14px}.qv-doc{border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;background:#fff!important;color:#000}.qv-hira{overflow-x:auto;-webkit-overflow-scrolling:touch}.qv-hira table.hira{min-width:1200px}.qv-hira .tablewrap{overflow:visible}
+.qv-foot{font:11px/1.5 Arial,sans-serif;color:#555;text-align:center;padding:14px;border-top:1px solid #ddd}
+.qv-msg{padding:60px 18px;text-align:center;font:15px/1.6 Arial,sans-serif}
 .lp-fqr svg{width:100%;height:100%;display:block}
 .ul{display:block;font-size:12px;color:var(--muted);margin-bottom:3px}body.ishod .hodtoo{display:inline-flex!important}tr.bkbad td{background:#fdecea}.bkfmt td,.bkfmt th{font-size:12px}#vGate{position:fixed;inset:0;z-index:25;background:var(--bg,#f4f6f9);display:flex;align-items:center;justify-content:center;padding:20px}#vGate .vg{max-width:460px;text-align:center;background:var(--card,#fff);border:1px solid var(--line);border-top:4px solid var(--accent,#e8590c);border-radius:6px;padding:28px 24px;box-shadow:0 8px 30px rgba(0,0,0,.12)}#vGate .vgi{font-size:40px}#vGate h2{margin:6px 0 10px;font-size:20px}body.gated{overflow:hidden}#ovAdmin input[type=password],#ovAdmin input[type=text],.ug input,.ug select{width:100%;box-sizing:border-box}.utbl select{min-width:96px}
 .udepts{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13px;padding:4px 0}.udepts label{display:flex;gap:5px;align-items:center;white-space:nowrap}.udepts input{width:auto}
@@ -614,7 +621,7 @@ details.mlist>.tablewrap{margin:0;border:0;border-top:1px solid var(--line)}
       <p class="note">Users with access to your departments. Ask the administrator to change a role, reset a password or remove someone.</p>
     </div>
     <div data-utp="sec" class="full" hidden>
-      <div class="ureq"><div class="uh"><b>Access settings</b></div><label class="ureset"><input type="checkbox" id="usViewLogin"> Login required to view anything — no anonymous viewing (give people a <b>Viewer</b> login)</label><label class="ureset"><input type="checkbox" id="usHodAppr"> Users added by an HOD need administrator approval</label></div>
+      <div class="ureq"><div class="uh"><b>Access settings</b></div><label class="ureset"><input type="checkbox" id="usViewLogin"> Login required to view anything — no anonymous viewing (give people a <b>Viewer</b> login)</label><label class="ureset"><input type="checkbox" id="usHodAppr"> Users added by an HOD need administrator approval</label><label class="ureset"><input type="checkbox" id="usQrOpen"> A QR scan opens <b>only its own document</b> without login (even when login is required to view)</label></div>
       <div class="ureq"><div class="uh"><b>Administrator recovery code</b></div><p class="note" id="urRec" style="margin:4px 0 8px"></p><button class="btn" type="button" id="urRecGo">Create / replace recovery code</button></div>
       <div class="ureq"><div class="uh"><b>How passwords are protected</b></div><p class="note" style="margin:4px 0">Passwords are never stored — only a salted fingerprint (SHA-256, 1000 rounds). 5 wrong attempts lock a user ID for 5 minutes. Administrators can issue a temporary password; nobody, including the administrator, can read a password. This works per computer / browser: it guards editing, it is not server-grade security.</p></div>
       <div style="display:flex;align-items:center;gap:8px;margin:10px 0 6px"><b style="font-size:14px">Activity log</b><span class="note">latest 80</span><span style="flex:1"></span><button class="btn" type="button" id="urLogClr">Clear log</button></div>
@@ -622,7 +629,7 @@ details.mlist>.tablewrap{margin:0;border:0;border-top:1px solid var(--line)}
     </div>
     <div data-utp="data" class="full" hidden>
       <div class="ureq" style="border-left-color:#2e7d32"><div class="uh"><b>Publish for QR codes &amp; mobiles</b></div><p class="note" style="margin:4px 0 8px">A phone that scans a document QR opens the site and reads <code>vgu-data.json</code> from the same GitHub folder as <code>index.html</code>. After approving changes, download it here and upload it to the repository (replace the old file) — every phone then shows the current revision. Computers that edit keep their own data.</p>
-        <label class="ureset"><input type="checkbox" id="pubUsers"> Include logins and access settings — needed when <i>Login required to view</i> is on (password fingerprints are then inside the public file, so use strong passwords)</label>
+        <label class="ureset"><input type="checkbox" id="pubUsers"> Include logins and access settings — needed only if staff should log in on phones to browse; QR scans work without it (password fingerprints are then inside the public file, so use strong passwords)</label>
         <div class="ubtns" style="align-items:center"><span class="note" id="pubInfo" style="flex:1"></span><button class="btn primary" type="button" id="pubGo">⬇ Download vgu-data.json</button></div></div>
       <div class="ureq"><div class="uh"><b>Full backup</b></div><p class="note" style="margin:4px 0 8px">One file with everything on this computer — documents, HIRAs, formats, letterhead images, users, sign-off defaults. Take one weekly and before any big change.</p>
         <button class="btn primary" type="button" id="urBackup">⬇ Download full backup</button> <button class="btn" type="button" id="urRestore">⬆ Restore from backup…</button><input type="file" id="urRestoreF" accept=".json,application/json" hidden></div>
@@ -2263,14 +2270,14 @@ document.getElementById('urRecGo').onclick=()=>{if(!adminPw(load(UREC_KEY,null)?
 document.getElementById('urLogClr').onclick=()=>{if(adminPw('Clear the activity log')){save(ULOG_KEY,[]);ulog('Activity log cleared',cur.name);renderUsers()}};
 /* ===== Viewer role, view-access settings, bulk user import (admin + HOD) ===== */
 const USET_KEY='vgu_qasite_usettings';
-const USET=()=>Object.assign({viewLogin:false,hodApproval:true},load(USET_KEY,{})||{});
+const USET=()=>Object.assign({viewLogin:false,hodApproval:true,qrOpen:true},window._pubSet||{},load(USET_KEY,{})||{});
 /* department-limited viewers see only their departments; while limited, document stores are write-protected */
 let _full=null;const _save0=save;
 save=function(k,v){if(_full&&(k===KEY_S||k===KEY_HD||k==='vgu_qasite_depts'))return false;return _save0(k,v)};
 function viewScope(){if(_full){sops=_full.s;hdocs=_full.h;depts=_full.d;_full=null}
  const want=cur&&cur.role==='viewer'&&cur.depts&&cur.depts.length?cur.depts:null;
  if(want){_full={s:sops,h:hdocs,d:depts};sops=sops.filter(x=>want.includes(x.dept));hdocs=hdocs.filter(x=>want.includes(x.dept));depts=depts.filter(d=>want.includes(d))}}
-function gateUpdate(){const on=!!USET().viewLogin&&!cur;document.body.classList.toggle('gated',on);let g=document.getElementById('vGate');
+function gateUpdate(){const on=!!USET().viewLogin&&!cur&&!document.body.classList.contains('qrmode');document.body.classList.toggle('gated',on);let g=document.getElementById('vGate');
  if(on&&!g){g=document.createElement('div');g.id='vGate';g.innerHTML=`<div class="vg"><div class="vgi">🔒</div><h2>VGU-SOP, SMP, WI &amp; HIRA Management System</h2><p>Viewing documents needs a login. Log in with the user ID given by the administrator or your HOD, or ask for access.</p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn primary" type="button" onclick="document.getElementById('adminBtn').click()">Log in</button><button class="btn" type="button" onclick="document.getElementById('adminBtn').click();lgTab('req')">Request access</button></div></div>`;document.body.appendChild(g)}
  if(g)g.style.display=on?'':'none'}
 function scopeRefresh(){viewScope();sopIdx=-1;hIdx=-1;sopEditing=false;try{fillDepts();renderSopNav();renderSop();renderHNav();renderH();hdr();setEditUI();setHUI()}catch(e){}gateUpdate()}
@@ -2339,7 +2346,7 @@ function renderUsersX(){const $=id=>document.getElementById(id),adm=cur&&cur.rol
   $('bkRules').innerHTML=(adm?'Role: <b>Admin, HOD, Editor or Viewer</b>. ':`As HOD you can add <b>Editors and Viewers</b> for <b>${cur.depts.map(esc).join(', ')}</b>${USET().hodApproval?' — the administrator approves them before they can log in':''}. `)+'Departments: separate several with <b>;</b>. User ID blank = made from the name. Password blank = a temporary one is generated and must be changed at first login. A header row (Name, User ID, …) is recognised in any column order.';
   $('bkUpdW').style.display=adm?'':'none';renderBulk()}
  if(uTab==='mine'){const mine=users.filter(u=>u.role!=='admin'&&(u.depts.some(d=>cur.depts.includes(d))||(u.role==='viewer'&&!u.depts.length)));$('urMine').innerHTML=mine.map(u=>`<tr class="${u.status==='disabled'?'off':''}"><td>${esc(u.name)}</td><td><code>${esc(u.login)}</code></td><td>${ROLE_S[u.role]}</td><td>${u.depts.map(esc).join(', ')||'<i>all (view)</i>'}</td><td>${u.status==='active'?'Active':'Disabled'}${u.mustChange?' · temp password':''}</td><td class="note">${esc(u.lastLogin||'never')}</td></tr>`).join('')+ureq.filter(r=>r.type==='access'&&(r.depts||[]).some(d=>cur.depts.includes(d))).map(r=>`<tr><td>${esc(r.name)}</td><td><code>${esc(r.login)}</code></td><td>${ROLE_S[r.role]||''}</td><td>${(r.depts||[]).map(esc).join(', ')}</td><td><span class="ubadge rst">waiting for approval</span></td><td></td></tr>`).join('')||'<tr><td colspan="6" class="note">No users yet</td></tr>'}
- if(uTab==='sec'){const S=USET();$('usViewLogin').checked=S.viewLogin;$('usHodAppr').checked=S.hodApproval}
+ if(uTab==='sec'){const S=USET();$('usViewLogin').checked=S.viewLogin;$('usHodAppr').checked=S.hodApproval;$('usQrOpen').checked=S.qrOpen}
  if(uTab==='data'){$('pubUsers').checked=USET().viewLogin;$('pubInfo').innerHTML=PUB?`Copy on the site now: <b>${new Date(PUB.published).toLocaleString('en-GB')}</b>${PUB.by?' by '+esc(PUB.by):''} · ${(PUB.docs||[]).length} documents, ${(PUB.hira||[]).length} HIRAs`:(/^https?:$/.test(location.protocol)?'No vgu-data.json on the site yet — phones show the built-in original documents.':'Opened from a file — upload index.html and vgu-data.json to GitHub.')}}
 document.getElementById('bkTplX').onclick=()=>bulkTemplate('xlsx');document.getElementById('bkTplC').onclick=()=>bulkTemplate('csv');
 document.getElementById('bkUp').onclick=()=>document.getElementById('bkFile').click();
@@ -2348,7 +2355,7 @@ document.getElementById('bkCheck').onclick=()=>{const v=document.getElementById(
 document.getElementById('bkUpd').onchange=()=>{if(bulkRows.length)bulkCheck()};
 document.getElementById('bkGo').onclick=bulkCreate;
 document.getElementById('pubGo').onclick=()=>{const wu=document.getElementById('pubUsers').checked;if(!adminPw('Publish the current documents'+(wu?' and logins':'')+' as vgu-data.json'))return;const o=pubPayload(wu);dl('vgu-data.json',JSON.stringify(o),'application/json');ulog('Published vgu-data.json',cur.name,o.docs.length+' documents, '+o.hira.length+' HIRAs'+(wu?', with logins':''));toast('Downloaded vgu-data.json — upload it to the GitHub repository next to index.html')};
-['usViewLogin','usHodAppr'].forEach(id=>document.getElementById(id).onchange=e=>{const S=USET(),k=id==='usViewLogin'?'viewLogin':'hodApproval';if(!adminPw((e.target.checked?'Turn ON: ':'Turn OFF: ')+(k==='viewLogin'?'login required to view':'HOD-added users need admin approval'))){e.target.checked=S[k];return}S[k]=e.target.checked;save(USET_KEY,S);ulog('Access setting changed',cur.name,k+' = '+(S[k]?'on':'off'));gateUpdate();toast('Setting saved')});
+['usViewLogin','usHodAppr','usQrOpen'].forEach(id=>document.getElementById(id).onchange=e=>{const S=USET(),k={usViewLogin:'viewLogin',usHodAppr:'hodApproval',usQrOpen:'qrOpen'}[id];if(!adminPw((e.target.checked?'Turn ON: ':'Turn OFF: ')+({viewLogin:'login required to view',hodApproval:'HOD-added users need admin approval',qrOpen:'QR scan opens its own document without login'})[k])){e.target.checked=S[k];return}S[k]=e.target.checked;save(USET_KEY,S);ulog('Access setting changed',cur.name,k+' = '+(S[k]?'on':'off'));gateUpdate();toast('Setting saved')});
 viewScope();gateUpdate();
 /* ===== QR codes: every SOP / SMP / WI / HIRA carries a QR that opens it in the hosted app ===== */
 const QR_DEF_BASE='https://arunkumarmahapatra24-bot.github.io/vgu-sop-hira/';
@@ -2368,18 +2375,32 @@ function qrLabelHtml(list){const c=qrCfg();return `<div class="qr-labels">${list
 function qrLabels(list,title){if(!list.length){toast('No documents to label');return}genPrint('qrlab',title||'QR labels',()=>qrLabelHtml(list),'portrait')}
 function qrLabelsOne(b){const no=b.closest('.qr-end').dataset.no;const d=sops.find(x=>x.no===no);if(d)return qrLabels([{kind:'doc',d}],'QR label — '+no);const h=hdocs.find(x=>x.no===no);if(h)qrLabels([{kind:'hira',d:h}],'QR label — '+no)}
 function qrLabelsDept(){const fd=document.getElementById('fDept').value;const list=[...sops.filter(s=>!fd||s.dept===fd).map(d=>({kind:'doc',d})),...hdocs.filter(h=>!fd||h.dept===fd).map(d=>({kind:'hira',d}))];qrLabels(list,'QR labels — '+(fd||'all departments'))}
-/* open the document named in the link (#doc=… / #hira=…) */
-function qrRoute(){const m=location.hash.match(/^#(doc|hira)=(.+)$/);if(!m)return;let no;try{no=decodeURIComponent(m[2])}catch(e){return}
- const go=()=>{if(m[1]==='doc'){let i=sops.findIndex(s=>s.no===no);if(i<0&&PUB&&!_full){const d=(PUB.docs||[]).find(s=>s.no===no);if(d){sops.push(clone(d));i=sops.length-1;renderSopNav()}}
-   if(i<0){toast(_full?'That document is outside the departments of your login':'Document '+no+' is not on this device yet — the administrator must publish the latest copy');return}show('sop');selSop(i);setTimeout(()=>{const e=document.getElementById('sopdoc');if(e)e.scrollIntoView({block:'start'})},60)}
-  else{let i=hdocs.findIndex(h=>h.no===no);if(i<0&&PUB&&!_full){const d=(PUB.hira||[]).find(h=>h.no===no);if(d){hdocs.push(clone(d));i=hdocs.length-1}}if(i<0){toast('HIRA '+no+' is not on this device');return}show('hira');selH(i)}};
- if(document.body.classList.contains('gated')){window._afterLogin=go;toast('Log in to open '+no);return}go()}
+/* open the document named in the link (#doc=… / #hira=…) as a locked, read-only single-document page */
+function qrView(html,d,clean){let v=document.getElementById('qrView');if(!v){v=document.createElement('div');v.id='qrView';document.body.appendChild(v)}
+ const body=document.createElement('div');body.className='qv-body';body.innerHTML=html;
+ if(clean){body.querySelectorAll('.pen,.adm,.act,.qr-end,.screen,button,input,select,textarea,script').forEach(e=>e.remove());body.querySelectorAll('[onclick]').forEach(e=>e.removeAttribute('onclick'));body.querySelectorAll('a[href]').forEach(a=>{const s=document.createElement('span');s.textContent=a.textContent;a.replaceWith(s)})}
+ v.innerHTML=`<div class="qv-bar"><div class="qv-l"><b>VGU · Controlled document</b><span>My Home Industries Pvt. Ltd. · Vizag Grinding Unit</span></div><div class="qv-r">${d?`<b>${esc(d.no)}</b><span>Rev ${esc(d.rev||'00')}${d.revDate?' · '+esc(d.revDate):''}</span>`:''}</div></div>`;
+ v.appendChild(body);if(d){const f=document.createElement('div');f.className='qv-foot';f.innerHTML=`Opened from the QR code · read-only · ${esc(new Date().toLocaleString('en-GB'))}${PUB?` · published copy of ${esc(new Date(PUB.published).toLocaleDateString('en-GB'))}`:''}<br>Printed copies are uncontrolled — scan the QR at site for the current revision.`;v.appendChild(f)}
+ document.title=d?d.no+' — '+(d.title||d.task||''):'VGU controlled document';window.scrollTo(0,0);requestAnimationFrame(layZoom)}
+function qrMsg(h){qrView(`<div class="qv-msg">${h}</div>`,null,false)}
+function qrRoute(){const m=location.hash.match(/^#(doc|hira)=(.+)$/);
+ if(!m){if(document.body.classList.contains('qrmode'))qrMsg('No document selected.<br>Scan the QR code printed on the document.');return}
+ let no;try{no=decodeURIComponent(m[2])}catch(e){return}const kind=m[1];document.body.classList.add('qrmode');gateUpdate();
+ const go=()=>{if(kind==='doc'){let i=sops.findIndex(s=>s.no===no);if(i<0&&PUB&&!_full){const d=(PUB.docs||[]).find(s=>s.no===no);if(d){sops.push(clone(d));i=sops.length-1}}
+   if(i<0){qrMsg(_full?'This document is outside the departments of your login.':`Document <b>${esc(no)}</b> is not available.<br>It may have been withdrawn, or the latest copy is not published yet — contact the document controller.`);return}
+   sopIdx=i;sopEditing=false;renderSop();qrView(`<div class="sop-doc qv-doc">${document.getElementById('sopdoc').innerHTML}</div>`,sops[i],true)}
+  else{let i=hdocs.findIndex(h=>h.no===no);if(i<0&&PUB&&!_full){const d=(PUB.hira||[]).find(h=>h.no===no);if(d){hdocs.push(clone(d));i=hdocs.length-1}}
+   if(i<0){qrMsg(`HIRA <b>${esc(no)}</b> is not available.<br>Contact the document controller.`);return}
+   hIdx=i;renderH();qrView(`<div class="sop-doc qv-doc qv-hira">${document.getElementById('hdoc').innerHTML}</div>`,hdocs[i],true)}};
+ const S=USET();if(S.viewLogin&&!cur&&!S.qrOpen){window._afterLogin=go;qrView(`<div class="qv-msg">🔒 <b>${esc(no)}</b> needs a login to view.<br><br><button class="btn primary" type="button" onclick="document.getElementById('adminBtn').click()">Log in</button></div>`,null,false);return}
+ go()}
+if(/^#(doc|hira)=/.test(location.hash)){document.body.classList.add('qrmode');qrMsg('Opening the document…')}
 window.addEventListener('hashchange',qrRoute);
 /* ---- publish: one data file next to index.html so every phone sees the current documents ---- */
 let PUB=null;
 function qrFootOpt(s,F){const c=qrCfg(F);return c.mode==='foot'||c.mode==='both'?{qrHtml:qrSvg(qrLink('doc',s.no,F)),qrSize:Math.min(c.size,20)}:{}}
 function pubPayload(withUsers){const o={pub:'vgu-qasite',published:new Date().toISOString(),by:cur?cur.name:'',docs:_full?_full.s:sops,hira:_full?_full.h:hdocs,depts:_full?_full.d:depts,docfmt:dfmt,hirafmt:hfmt,docassets:assetSubset(dfmt),sigdefs:sigDefs};
- if(withUsers){o.users=users.filter(u=>u.status==='active').map(u=>({...u,lastLogin:''}));o.usettings=USET()}return o}
+ o.usettings=USET();if(withUsers)o.users=users.filter(u=>u.status==='active').map(u=>({...u,lastLogin:''}));return o}
 async function pubLoad(){if(/^https?:$/.test(location.protocol)){try{const r=await fetch(new URL('vgu-data.json',location.href).href.split('#')[0]+'?t='+Date.now(),{cache:'no-store'});if(r.ok){const j=await r.json();if(j&&j.pub==='vgu-qasite')PUB=j}}catch(e){}}
  if(PUB){const has=k=>{try{return localStorage.getItem(k)!=null}catch(e){return true}};let used=false;if(_full){sops=_full.s;hdocs=_full.h;depts=_full.d;_full=null}
   if(!has(KEY_S)&&Array.isArray(PUB.docs)&&PUB.docs.length){sops=clone(PUB.docs);sops.forEach(s=>{s.kind=s.kind||'SOP';s.dept=s.dept||deptOf(s.no)});used=true}
@@ -2387,10 +2408,11 @@ async function pubLoad(){if(/^https?:$/.test(location.protocol)){try{const r=awa
   if(!has('vgu_qasite_depts')&&Array.isArray(PUB.depts))depts=PUB.depts.slice();
   if(PUB.docassets)Object.entries(PUB.docassets).forEach(([k,v])=>{if(v&&v.d&&!dasset[k])dasset[k]=v});
   if(!has(DF_KEY)&&PUB.docfmt)dfmt=dfNormalize(PUB.docfmt);if(!has(HF_KEY)&&PUB.hirafmt)hfmt=hfNormalize(PUB.hirafmt);if(!has('vgu_signatories')&&PUB.sigdefs)Object.assign(sigDefs,PUB.sigdefs);
+  if(PUB.usettings)window._pubSet=PUB.usettings;
   const fresh=users.length===1&&users[0].role==='admin'&&users[0].mustChange&&!users[0].lastLogin;
-  if(Array.isArray(PUB.users)&&PUB.users.length&&fresh){users=PUB.users.map(userNorm);saveUsers();if(PUB.usettings&&!has(USET_KEY))save(USET_KEY,PUB.usettings);curSync()}
+  if(Array.isArray(PUB.users)&&PUB.users.length&&fresh){users=PUB.users.map(userNorm);saveUsers();curSync()}
   viewScope();try{fillDepts();renderSopNav();renderSop();renderHNav();renderH();hdr()}catch(e){}gateUpdate();applyRole();
-  if(used)setTimeout(()=>toast('Published copy of '+new Date(PUB.published).toLocaleDateString('en-GB')+(PUB.by?' by '+PUB.by:'')),400)}
+  if(used&&!document.body.classList.contains('qrmode'))setTimeout(()=>toast('Published copy of '+new Date(PUB.published).toLocaleDateString('en-GB')+(PUB.by?' by '+PUB.by:'')),400)}
  qrRoute()}
 const QR_CSS=`.qr-end{display:flex;gap:4mm;align-items:center;margin:8mm 0 2mm;padding:3mm;border:1px solid #999;border-radius:2mm;break-inside:avoid;page-break-inside:avoid;background:#fff;color:#000;max-width:150mm}
 .qr-img{flex:none;line-height:0}.qr-img svg{width:100%;height:100%;display:block}
