@@ -804,7 +804,7 @@ body.qrmode>*:not(#qrView):not(.overlay):not(.toast){display:none!important}body
             <div class="field"><label>QR size, mm</label><input type="number" id="qr_size" min="14" max="50"></div>
             <div class="field" style="grid-column:span 2"><label>Line under the QR</label><input type="text" id="qr_text"></div>
           </div>
-          <div class="field" style="margin:0"><label>Link the QR opens — the hosted app (blank = this site / GitHub Pages)</label><input type="text" id="qr_base" placeholder="https://arunkumarmahapatra24-bot.github.io/vgu-sop-hira/"></div>
+          <div class="field" style="margin:0"><label>Link the QR opens — the hosted app (blank = this site / GitHub Pages)</label><input type="text" id="qr_base" placeholder="https://arunkumarmahapatra24-bot.github.io/HIRA-SOP-SMP-WI--MANAGEMENT-SYSTEM/"></div>
           <p class="note" style="margin:4px 0 0">The QR holds this link plus the document number, so a phone opens that exact document. Phones see the copy <b>published</b> on the site (Users &amp; access → Backup &amp; publish), so publish after approving changes. Applies to all document types and HIRAs.</p>
         </details>
         <p class="note" id="lay_store" style="margin:4px 0 0"></p>
@@ -2278,7 +2278,7 @@ function viewScope(){if(_full){sops=_full.s;hdocs=_full.h;depts=_full.d;_full=nu
  const want=cur&&cur.role==='viewer'&&cur.depts&&cur.depts.length?cur.depts:null;
  if(want){_full={s:sops,h:hdocs,d:depts};sops=sops.filter(x=>want.includes(x.dept));hdocs=hdocs.filter(x=>want.includes(x.dept));depts=depts.filter(d=>want.includes(d))}}
 function gateUpdate(){const on=!!USET().viewLogin&&!cur&&!document.body.classList.contains('qrmode');document.body.classList.toggle('gated',on);let g=document.getElementById('vGate');
- if(on&&!g){g=document.createElement('div');g.id='vGate';g.innerHTML=`<div class="vg"><div class="vgi">🔒</div><h2>VGU-SOP, SMP, WI &amp; HIRA Management System</h2><p>Viewing documents needs a login. Log in with the user ID given by the administrator or your HOD, or ask for access.</p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn primary" type="button" onclick="document.getElementById('adminBtn').click()">Log in</button><button class="btn" type="button" onclick="document.getElementById('adminBtn').click();lgTab('req')">Request access</button></div></div>`;document.body.appendChild(g)}
+ if(on&&!g){g=document.createElement('div');g.id='vGate';g.innerHTML=`<div class="vg"><div class="vgi">🔒</div><h2>VGU-SOP, SMP, WI &amp; HIRA Management System</h2><p>Viewing documents needs a login. Log in with the user ID given by the administrator or your HOD, or ask for access.</p><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn primary" type="button" onclick="masterLogin()">Log in</button><button class="btn" type="button" onclick="if(PUB&&PUB.master){location.href=PUB.master+'/login'}else{document.getElementById('adminBtn').click();lgTab('req')}">Request access</button></div></div>`;document.body.appendChild(g)}
  if(g)g.style.display=on?'':'none'}
 function scopeRefresh(){viewScope();sopIdx=-1;hIdx=-1;sopEditing=false;try{fillDepts();renderSopNav();renderSop();renderHNav();renderH();hdr();setEditUI();setHUI()}catch(e){}gateUpdate()}
 /* ---- bulk import ---- */
@@ -2358,7 +2358,7 @@ document.getElementById('pubGo').onclick=()=>{const wu=document.getElementById('
 ['usViewLogin','usHodAppr','usQrOpen'].forEach(id=>document.getElementById(id).onchange=e=>{const S=USET(),k={usViewLogin:'viewLogin',usHodAppr:'hodApproval',usQrOpen:'qrOpen'}[id];if(!adminPw((e.target.checked?'Turn ON: ':'Turn OFF: ')+({viewLogin:'login required to view',hodApproval:'HOD-added users need admin approval',qrOpen:'QR scan opens its own document without login'})[k])){e.target.checked=S[k];return}S[k]=e.target.checked;save(USET_KEY,S);ulog('Access setting changed',cur.name,k+' = '+(S[k]?'on':'off'));gateUpdate();toast('Setting saved')});
 viewScope();gateUpdate();
 /* ===== QR codes: every SOP / SMP / WI / HIRA carries a QR that opens it in the hosted app ===== */
-const QR_DEF_BASE='https://arunkumarmahapatra24-bot.github.io/vgu-sop-hira/';
+const QR_DEF_BASE='https://arunkumarmahapatra24-bot.github.io/HIRA-SOP-SMP-WI--MANAGEMENT-SYSTEM/';
 try{qrcode.stringToBytes=qrcode.stringToBytesFuncs['UTF-8']}catch(e){}
 function qrNorm(q){q=q||{};const n=parseFloat(q.size);return {mode:['end','foot','both','off'].includes(q.mode)?q.mode:'end',size:isFinite(n)?Math.min(50,Math.max(14,n)):24,text:String(q.text??'Scan with a mobile to open the latest controlled version'),base:String(q.base||'').trim()}}
 function qrCfg(F){const q=qrNorm((F||dfmt).qr);q.url=q.base||(/^https?:$/.test(location.protocol)?location.origin+location.pathname:QR_DEF_BASE);return q}
@@ -2386,13 +2386,13 @@ function qrMsg(h){qrView(`<div class="qv-msg">${h}</div>`,null,false)}
 function qrRoute(){const m=location.hash.match(/^#(doc|hira)=(.+)$/);
  if(!m){if(document.body.classList.contains('qrmode'))qrMsg('No document selected.<br>Scan the QR code printed on the document.');return}
  let no;try{no=decodeURIComponent(m[2])}catch(e){return}const kind=m[1];document.body.classList.add('qrmode');gateUpdate();
- const go=()=>{if(kind==='doc'){let i=sops.findIndex(s=>s.no===no);if(i<0&&PUB&&!_full){const d=(PUB.docs||[]).find(s=>s.no===no);if(d){sops.push(clone(d));i=sops.length-1}}
-   if(i<0){qrMsg(_full?'This document is outside the departments of your login.':`Document <b>${esc(no)}</b> is not available.<br>It may have been withdrawn, or the latest copy is not published yet — contact the document controller.`);return}
+ const fromMaster=!!(PUB&&PUB.master&&!PUB.disabled);const go=()=>{if(kind==='doc'){let i=-1;if(fromMaster){const d=(PUB.docs||[]).find(s=>s.no===no);if(d){i=sops.findIndex(s=>s.no===no&&s._pub);if(i<0){sops.push(Object.assign(clone(d),{_pub:1}));i=sops.length-1}}}else{i=sops.findIndex(s=>s.no===no);if(i<0&&PUB&&!_full){const d=(PUB.docs||[]).find(s=>s.no===no);if(d){sops.push(clone(d));i=sops.length-1}}}
+   if(i<0){qrMsg(PUB&&PUB.disabled?'The document site is switched off by the administrator.':_full?'This document is outside the departments of your login.':`Document <b>${esc(no)}</b> is not available.<br>It may have been withdrawn, or the latest copy is not published yet — contact the document controller.`);return}
    sopIdx=i;sopEditing=false;renderSop();qrView(`<div class="sop-doc qv-doc">${document.getElementById('sopdoc').innerHTML}</div>`,sops[i],true)}
-  else{let i=hdocs.findIndex(h=>h.no===no);if(i<0&&PUB&&!_full){const d=(PUB.hira||[]).find(h=>h.no===no);if(d){hdocs.push(clone(d));i=hdocs.length-1}}
+  else{let i=-1;if(fromMaster){const d=(PUB.hira||[]).find(h=>h.no===no);if(d){i=hdocs.findIndex(h=>h.no===no&&h._pub);if(i<0){hdocs.push(Object.assign(clone(d),{_pub:1}));i=hdocs.length-1}}}else{i=hdocs.findIndex(h=>h.no===no);if(i<0&&PUB&&!_full){const d=(PUB.hira||[]).find(h=>h.no===no);if(d){hdocs.push(clone(d));i=hdocs.length-1}}}
    if(i<0){qrMsg(`HIRA <b>${esc(no)}</b> is not available.<br>Contact the document controller.`);return}
    hIdx=i;renderH();qrView(`<div class="sop-doc qv-doc qv-hira">${document.getElementById('hdoc').innerHTML}</div>`,hdocs[i],true)}};
- const S=USET();if(S.viewLogin&&!cur&&!S.qrOpen){window._afterLogin=go;qrView(`<div class="qv-msg">🔒 <b>${esc(no)}</b> needs a login to view.<br><br><button class="btn primary" type="button" onclick="document.getElementById('adminBtn').click()">Log in</button></div>`,null,false);return}
+ const S=USET();if(S.viewLogin&&!cur&&!S.qrOpen){window._afterLogin=go;qrView(`<div class="qv-msg">🔒 <b>${esc(no)}</b> needs a login to view.<br><br><button class="btn primary" type="button" onclick="masterLogin()">Log in</button></div>`,null,false);return}
  go()}
 if(/^#(doc|hira)=/.test(location.hash)){document.body.classList.add('qrmode');qrMsg('Opening the document…')}
 window.addEventListener('hashchange',qrRoute);
@@ -2401,7 +2401,11 @@ let PUB=null;
 function qrFootOpt(s,F){const c=qrCfg(F);return c.mode==='foot'||c.mode==='both'?{qrHtml:qrSvg(qrLink('doc',s.no,F)),qrSize:Math.min(c.size,20)}:{}}
 function pubPayload(withUsers){const o={pub:'vgu-qasite',published:new Date().toISOString(),by:cur?cur.name:'',docs:_full?_full.s:sops,hira:_full?_full.h:hdocs,depts:_full?_full.d:depts,docfmt:dfmt,hirafmt:hfmt,docassets:assetSubset(dfmt),sigdefs:sigDefs};
  o.usettings=USET();if(withUsers)o.users=users.filter(u=>u.status==='active').map(u=>({...u,lastLogin:''}));return o}
-async function pubLoad(){if(/^https?:$/.test(location.protocol)){try{const r=await fetch(new URL('vgu-data.json',location.href).href.split('#')[0]+'?t='+Date.now(),{cache:'no-store'});if(r.ok){const j=await r.json();if(j&&j.pub==='vgu-qasite')PUB=j}}catch(e){}}
+const MASTER_FEED='https://vgu-sop-smp-hira.floot.app/_api/public/feed';
+function masterLogin(){if(PUB&&PUB.master){location.href=PUB.master;return}document.getElementById('adminBtn').click()}
+async function pubLoad(){try{const r=await fetch(MASTER_FEED+'?t='+Date.now(),{cache:'no-store'});if(r.ok){const j=await r.json();if(j&&j.pub==='vgu-qasite')PUB=j}}catch(e){}
+ if(PUB&&PUB.disabled){let has=false;try{has=localStorage.getItem(KEY_S)!=null}catch(e){}if(!has){sops=[];hdocs=[]}}
+ if(!PUB&&/^https?:$/.test(location.protocol)){try{const r=await fetch(new URL('vgu-data.json',location.href).href.split('#')[0]+'?t='+Date.now(),{cache:'no-store'});if(r.ok){const j=await r.json();if(j&&j.pub==='vgu-qasite')PUB=j}}catch(e){}}
  if(PUB){const has=k=>{try{return localStorage.getItem(k)!=null}catch(e){return true}};let used=false;if(_full){sops=_full.s;hdocs=_full.h;depts=_full.d;_full=null}
   if(!has(KEY_S)&&Array.isArray(PUB.docs)&&PUB.docs.length){sops=clone(PUB.docs);sops.forEach(s=>{s.kind=s.kind||'SOP';s.dept=s.dept||deptOf(s.no)});used=true}
   if(!has(KEY_HD)&&Array.isArray(PUB.hira)&&PUB.hira.length){hdocs=clone(PUB.hira);used=true}
